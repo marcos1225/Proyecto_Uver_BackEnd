@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('vehiculos', function (Blueprint $table) {
-            $table->id('idVehiculo');
-            $table->string('matricula')->unique();
+            $table->string('matricula')->primary();
             $table->unsignedBigInteger('idMarca');
             $table->unsignedBigInteger('idModelo');
             $table->foreign('idMarca')->references('idMarca')->on('marcas')->onDelete('cascade');

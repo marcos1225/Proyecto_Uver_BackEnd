@@ -15,6 +15,7 @@ class Viaje extends Model
         'cedulaConductor',
         'UbicacionPasajero',
         'UbicacionDestino',
+        'estado',
     ];
 
     public function pasajero()
@@ -25,4 +26,11 @@ class Viaje extends Model
     {
         return $this->belongsTo(UsuarioConductor::class, 'cedulaConductor');
     }
+    public function casts():array //castea el booleano de estado de 0-1 a true or false.
+ {
+    return [
+        'estado' => 'boolean',
+        
+    ];
+ }
 }

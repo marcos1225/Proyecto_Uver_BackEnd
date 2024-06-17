@@ -25,4 +25,8 @@ class Vehiculo extends Model
     {
         return $this->belongsTo(Marca::class, 'idMarca');
     }
+    public function usuario_conductor()
+    {
+        return $this->belongsTo(UsuarioConductor::class, 'idVehiculo');
+    }
 }

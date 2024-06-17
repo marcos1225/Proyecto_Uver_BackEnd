@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('cedulaPasajero');
             $table->string('cedulaConductor');      
             $table->string('UbicacionPasajero');      
-            $table->string('UbicacionDestino');      
+            $table->string('UbicacionDestino'); 
+            $table->boolean('estado');     
             $table->timestamps();
 
         $table->foreign('cedulaPasajero')->references('cedula')->on('usuarios')->onDelete('cascade');

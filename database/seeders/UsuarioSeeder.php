@@ -16,14 +16,14 @@ class UsuarioSeeder extends Seeder
     {
         Usuario::create([
             'cedula' => '1234567890',
-            'numero' => '187472323',
+            'numero' => 873637823,
             'nombre' => 'Nombre',
             'apellido' => 'Apellido',
             'clave' => 'password',
         ]);
         Usuario::create([
             'cedula' => '2222',
-            'numero' => '187472323',
+            'numero' => 187472323,
             'nombre' => 'Nombre',
             'apellido' => 'Apellido',
             'clave' => 'password',

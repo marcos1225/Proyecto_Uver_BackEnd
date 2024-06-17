@@ -18,6 +18,7 @@ class ViajeSeeder extends Seeder
             'cedulaConductor' => '2222',
             'UbicacionPasajero' => 'Ubicación inicial del pasajero',
             'UbicacionDestino' => 'Ubicación de destino',
+            'estado' => '1',
         ]);
         
     }

@@ -20,4 +20,8 @@ class UsuarioConductor extends Model
     {
         return $this->belongsTo(Licencia::class, 'idLicencia');
     }
+    public function vehiculo()
+    {
+        return $this->hasmany(Vehiculo::class, 'idVehiculo'); 
+    }
 }
