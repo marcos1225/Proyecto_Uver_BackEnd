@@ -14,9 +14,9 @@ class UsuarioConductorSeeder extends Seeder
     public function run()
     {
         UsuarioConductor::create([
-            'cedulaConductor' => '2222', 
+            'numeroConductor' => 63549134, 
             'idLicencia' => 3, 
-            'vehiculo' => 'ABC123', 
+            'idVehiculo' => 'ABC123', 
         ]);
 
     }

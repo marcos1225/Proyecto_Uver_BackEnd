@@ -16,18 +16,19 @@ class UsuarioSeeder extends Seeder
     {
         Usuario::create([
             'cedula' => '1234567890',
-            'numero' => 873637823,
-            'nombre' => 'Nombre',
-            'apellido' => 'Apellido',
-            'clave' => 'password',
+            'numero' => 63549134,
+            'nombre' => 'Marcos',
+            'apellido' => 'Gonzalez',
+            'clave' => bcrypt('patitos123'),
         ]);
         Usuario::create([
             'cedula' => '2222',
-            'numero' => 187472323,
-            'nombre' => 'Nombre',
-            'apellido' => 'Apellido',
-            'clave' => 'password',
+            'numero' => 60906199,
+            'nombre' => 'Maria',
+            'apellido' => 'Navarrete',
+            'clave' => bcrypt('pollitos123'),
         ]);
+       
         
     }
 }

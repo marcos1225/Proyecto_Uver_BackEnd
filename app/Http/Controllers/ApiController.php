@@ -1,9 +1,12 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Usuario;
 use App\Models\Viaje;
+use App\Models\UsuarioPasajero;
+use App\Models\UsuarioConductor;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 
@@ -12,11 +15,11 @@ class ApiController extends Controller
     public function crearUsuario(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'cedula' => 'required|string|unique:usuarios,cedula|max:255',
+            'cedula' => 'nullable|string|unique:usuarios,cedula|max:255',
             'numero' => 'required|integer|unique:usuarios,numero',
-            'nombre' => 'required|string|max:255',
-            'apellido' => 'required|string|max:255',
-            'clave' => 'required|string|max:255',
+            'nombre' => 'nullable|string|max:255',
+            'apellido' => 'nullable|string|max:255',
+            'clave' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -34,11 +37,28 @@ class ApiController extends Controller
         return response()->json(['message' => 'Usuario creado exitosamente', 'usuario' => $usuario], 201);
     }
 
+    public function registrarNumeroCelular(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'numero' => 'required|integer|unique:usuarios,numero',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 400);
+    }
+
+    $usuario = Usuario::create([
+        'numero' => $request->numero,
+    ]);
+
+    return response()->json(['message' => 'Número de celular registrado exitosamente', 'usuario' => $usuario], 201);
+}
+
     public function crearViaje(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'cedulaConductor' => 'required|string|exists:usuarios,cedula',
-            'cedulaPasajero' => 'required|string|exists:usuarios,cedula',
+            'numeroConductor' => 'required|integer|exists:usuario_conductors,numeroConductor',
+            'numeroPasajero' => 'required|integer|exists:usuario_pasajeros,numeroPasajero',
             'UbicacionPasajero' => 'required|string|max:255',
             'UbicacionDestino' => 'required|string|max:255',
             'estado' => 'required|boolean',
@@ -50,8 +70,8 @@ class ApiController extends Controller
 
         try {
             $viaje = Viaje::create([
-                'cedulaConductor' => $request->cedulaConductor,
-                'cedulaPasajero' => $request->cedulaPasajero,
+                'numeroConductor' => $request->numeroConductor,
+                'numeroPasajero' => $request->numeroPasajero,
                 'UbicacionPasajero' => $request->UbicacionPasajero,
                 'UbicacionDestino' => $request->UbicacionDestino,
                 'estado' => $request->estado,
@@ -61,7 +81,9 @@ class ApiController extends Controller
         } catch (\Exception $e) {
             // Registrar el error para depuración
             Log::error('Error al crear el viaje: ' . $e->getMessage());
-            return response()->json(['error' => 'Error al crear el viaje'], 500);
+            return response()->json(['error' => 'Error al crear el viaje', 'details' => $e->getMessage()]);
+        
         }
+    
     }
 }

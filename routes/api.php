@@ -7,3 +7,4 @@ use App\Http\Controllers\ApiController;
 
 Route::post('/usuarios', [ApiController::class, 'crearUsuario']);
 Route::post('/viajes', [ApiController::class, 'crearViaje']);
+Route::post('/registrar-numero-celular', [ApiController::class, 'registrarNumeroCelular']);

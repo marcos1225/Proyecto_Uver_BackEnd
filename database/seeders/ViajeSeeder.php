@@ -14,8 +14,8 @@ class ViajeSeeder extends Seeder
     public function run()
     {
         Viaje::create([
-            'cedulaPasajero' => '1234567890',
-            'cedulaConductor' => '2222',
+            'numeroPasajero' => 60906199,
+            'numeroConductor' => 63549134,
             'UbicacionPasajero' => 'Ubicación inicial del pasajero',
             'UbicacionDestino' => 'Ubicación de destino',
             'estado' => '1',

@@ -14,7 +14,8 @@ class UsuarioPasajeroSeeder extends Seeder
     public function run()
     {
         UsuarioPasajero::create([
-            'cedulaPasajero' => '1234567890', // Ajusta según tus necesidades
+            'numeroPasajero' => 60906199, // Ajusta según tus necesidades
         ]);
+        
     }
 }

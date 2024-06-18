@@ -19,32 +19,32 @@ class UverTest extends TestCase
 
     public function testCrearUsuarioExitosamente()
     {
-        $payload = [
-            'cedula' => '1234567890',
-            'numero' => 12345678,
-            'nombre' => 'Carlos',
-            'apellido' => 'Martinez',
-            'clave' => 'securepassword',
+        $user = [
+            'cedula' => '504390996',
+            'numero' => 63549134,
+            'nombre' => 'Jose',
+            'apellido' => 'Torres',
+            'clave' => bcrypt('perro123'),
         ];
 
-        $response = $this->postJson('/api/usuarios', $payload);
+        $response = $this->postJson('/api/usuarios', $user);
 
         $response->assertStatus(201)
                 ->assertJson([
                     'message' => 'Usuario creado exitosamente',
                     'usuario' => [
-                        'cedula' => $payload['cedula'],
-                        'numero' => $payload['numero'],
-                        'nombre' => $payload['nombre'],
-                        'apellido' => $payload['apellido'],
+                        'cedula' => $user['cedula'],
+                        'numero' => $user['numero'],
+                        'nombre' => $user['nombre'],
+                        'apellido' => $user['apellido'],
                     ],
                 ]);
 
         $this->assertDatabaseHas('usuarios', [
-            'cedula' => $payload['cedula'],
-            'numero' => $payload['numero'],
-            'nombre' => $payload['nombre'],
-            'apellido' => $payload['apellido'],
+            'cedula' => $user['cedula'],
+            'numero' => $user['numero'],
+            'nombre' => $user['nombre'],
+            'apellido' => $user['apellido'],
         ]);
     }
 
@@ -53,30 +53,78 @@ class UverTest extends TestCase
         // Crear un usuario inicial
         $usuario = Usuario::create([
             'cedula' => '1234567890',
-            'numero' => 123456789,
-            'nombre' => 'Juan',
-            'apellido' => 'Perez',
-            'clave' => bcrypt('securepassword1'),
+            'numero' => 87654325,
+            'nombre' => 'Luis',
+            'apellido' => 'Guzman',
+            'clave' => bcrypt('clavesecreta'),
         ]);
 
-        // Intentar crear un usuario con el mismo cedula 
-        $payload = [
-            'cedula' => '1234567890',
-            'numero' => 987654321,
-            'nombre' => 'Carlos',
-            'apellido' => 'Martinez',
-            'clave' => 'securepassword2',
+        // Intentar crear un usuario con el mismo numero de celular
+        $user2 = [
+            'cedula' => '93848393',
+            'numero' => 87654325,
+            'nombre' => 'Adrian',
+            'apellido' => 'Lopez',
+            'clave' => 'clavesecreta2',
         ];
 
-        $response = $this->postJson('/api/usuarios', $payload);
+        $response = $this->postJson('/api/usuarios', $user2);
 
         $response->assertStatus(400)
                  ->assertJsonStructure([
                      'errors' => [
-                         'cedula',
+                         'numero',
                      ],
                  ]);
     }
+
+    public function testRegistrarNumeroCelularExitosamente()
+{
+    $user = [
+        'numero' => 63549134,
+    ];
+
+    $response = $this->postJson('/api/registrar-numero-celular', $user);
+
+    $response->assertStatus(201)
+            ->assertJson([
+                'message' => 'Número de celular registrado exitosamente',
+                'usuario' => [
+                    'numero' => $user['numero'],
+                ],
+            ]);
+
+    $this->assertDatabaseHas('usuarios', [
+        'numero' => $user['numero'],
+    ]);
+}
+
+public function testRegistrarNumeroCelularDuplicado()
+{
+    // Crear un usuario inicial
+    $usuario = Usuario::create([
+        'cedula' => '1234567890',
+        'numero' => 12345678,
+        'nombre' => 'Rosa',
+        'apellido' => 'Perez',
+        'clave' => bcrypt('clavesecreta'),
+    ]);
+
+    // Intentar registrar un número de celular que ya existe
+    $user2 = [
+        'numero' => 12345678,
+    ];
+
+    $response = $this->postJson('/api/registrar-numero-celular', $user2);
+
+    $response->assertStatus(400)
+             ->assertJsonStructure([
+                 'errors' => [
+                     'numero',
+                 ],
+             ]);
+}
+
 
     public function testCrearViajeExitosamente()
     {
@@ -99,24 +147,24 @@ class UverTest extends TestCase
         // Crear vehiculo utilizando los IDs recién creados
         $vehiculo = Vehiculo::create([
             'matricula' => 'ABC123',
-            'idMarca' => $marca->id,  // Asegurándonos de obtener el ID correcto
-            'idModelo' => $modelo->id,  // Asegurándonos de obtener el ID correcto
+            'idMarca' => $marca->id,  
+            'idModelo' => $modelo->id,  
         ]);
 
         // Crear pasajero
         $pasajero = Usuario::create([
             'cedula' => '1234567890',
             'numero' => 12345678,
-            'nombre' => 'Carlos',
-            'apellido' => 'Martinez',
+            'nombre' => 'Marcos',
+            'apellido' => 'Gonzalez',
             'clave' => bcrypt('securepassword'),
         ]);
 
         UsuarioPasajero::create([
-            'cedulaPasajero' => $pasajero->cedula,
+            'numeroPasajero' => $pasajero->numero,
         ]);
 
-        
+        // Crear conductor
         $usuarioConductor = Usuario::create([
             'cedula' => '0987654321',
             'numero' => 87654321,
@@ -126,15 +174,15 @@ class UverTest extends TestCase
         ]);
 
         $conductor = UsuarioConductor::create([
-            'cedulaConductor' => $usuarioConductor->cedula,
+            'numeroConductor' => $usuarioConductor->numero,
             'idLicencia' => $licencia->id,
-            'idVehiculo' => $vehiculo->matricula,  // Asegúrate de que se está proporcionando 'idVehiculo'
+            'idVehiculo' => $vehiculo->matricula, 
         ]);
 
         // Datos del viaje
         $payload = [
-            'cedulaPasajero' => $pasajero->cedula,
-            'cedulaConductor' => $conductor->cedulaConductor,
+            'numeroPasajero' => $pasajero->numero,
+            'numeroConductor' => $conductor->numeroConductor,
             'UbicacionPasajero' => 'Ubicacion A',
             'UbicacionDestino' => 'Ubicacion B',
             'estado' => true,
@@ -146,8 +194,8 @@ class UverTest extends TestCase
                  ->assertJson([
                      'message' => 'Viaje creado exitosamente',
                      'viaje' => [
-                         'cedulaPasajero' => $payload['cedulaPasajero'],
-                         'cedulaConductor' => $payload['cedulaConductor'],
+                         'numeroPasajero' => $payload['numeroPasajero'],
+                         'numeroConductor' => $payload['numeroConductor'],
                          'UbicacionPasajero' => $payload['UbicacionPasajero'],
                          'UbicacionDestino' => $payload['UbicacionDestino'],
                          'estado' => $payload['estado'],
@@ -155,8 +203,8 @@ class UverTest extends TestCase
                  ]);
 
         $this->assertDatabaseHas('viajes', [
-            'cedulaPasajero' => $payload['cedulaPasajero'],
-            'cedulaConductor' => $payload['cedulaConductor'],
+            'numeroPasajero' => $payload['numeroPasajero'],
+            'numeroConductor' => $payload['numeroConductor'],
             'UbicacionPasajero' => $payload['UbicacionPasajero'],
             'UbicacionDestino' => $payload['UbicacionDestino'],
             'estado' => $payload['estado'],

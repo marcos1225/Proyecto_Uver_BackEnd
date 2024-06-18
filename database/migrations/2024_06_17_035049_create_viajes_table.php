@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('viajes', function (Blueprint $table) {
             $table->id('idViaje');
-            $table->string('cedulaPasajero');
-            $table->string('cedulaConductor');      
+            $table->integer('numeroPasajero');
+            $table->integer('numeroConductor');      
             $table->string('UbicacionPasajero');      
             $table->string('UbicacionDestino'); 
             $table->boolean('estado');     
             $table->timestamps();
 
-        $table->foreign('cedulaPasajero')->references('cedula')->on('usuarios')->onDelete('cascade');
-            $table->foreign('cedulaConductor')->references('cedula')->on('usuarios')->onDelete('cascade');
+        $table->foreign('numeroPasajero')->references('numero')->on('usuarios')->onDelete('cascade');
+            $table->foreign('numeroConductor')->references('numero')->on('usuarios')->onDelete('cascade');
         });
     }
 

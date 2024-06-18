@@ -11,11 +11,11 @@ class UsuarioPasajero extends Model
     public $timestamps = false;
     protected $table = 'usuario_pasajeros';
     protected $fillable = [
-        'cedulaPasajero'
+        'numeroPasajero'
     ];
 
     public function viajes()
     {
-        return $this->hasMany(Viaje::class, 'cedulaPasajero');
+        return $this->hasMany(Viaje::class, 'numeroPasajero');
     }
 }

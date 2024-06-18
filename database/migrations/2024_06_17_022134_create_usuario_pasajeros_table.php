@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('usuario_pasajeros', function (Blueprint $table) {
             $table->id('idPasajero');
-            $table->string('cedulaPasajero'); 
-            $table->foreign('cedulaPasajero')->references('cedula')->on('usuarios')->onDelete('cascade');
+            $table->integer('numeroPasajero'); 
+            $table->foreign('numeroPasajero')->references('numero')->on('usuarios')->onDelete('cascade');
             $table->timestamps();
         });
     }

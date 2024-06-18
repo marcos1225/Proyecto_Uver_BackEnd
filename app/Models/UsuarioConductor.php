@@ -11,7 +11,7 @@ class UsuarioConductor extends Model
     public $timestamps = false;
     protected $table = 'usuario_conductors';
     protected $fillable = [
-        'cedulaConductor',
+        'numeroConductor',
         'idLicencia',
         'idVehiculo',
     ];

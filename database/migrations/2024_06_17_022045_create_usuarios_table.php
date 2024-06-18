@@ -12,11 +12,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('usuarios', function (Blueprint $table) {
-            $table->string('cedula')->primary();
-            $table->integer('numero')->unique();
-            $table->string('nombre');
-            $table->string('apellido');
-            $table->string('clave');
+            $table->string('cedula')->nullable();
+            $table->integer('numero')->primary();
+            $table->string('nombre')->nullable();
+            $table->string('apellido')->nullable();
+            $table->string('clave')->nullable();
             $table->timestamps();
         });
     }

@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('usuario_conductors', function (Blueprint $table) {
             $table->id('idConductor');
-            $table->string('cedulaConductor');
+            $table->integer('numeroConductor');
             $table->unsignedBigInteger('idLicencia');
             $table->string('idVehiculo');
-            $table->foreign('cedulaConductor')->references('cedula')->on('usuarios')->onDelete('cascade');
+            $table->foreign('numeroConductor')->references('numero')->on('usuarios')->onDelete('cascade');
             $table->foreign('idLicencia')->references('idLicencia')->on('licencias')->onDelete('cascade');
             $table->foreign('idVehiculo')->references('matricula')->on('vehiculos')->onDelete('cascade');
             $table->timestamps();

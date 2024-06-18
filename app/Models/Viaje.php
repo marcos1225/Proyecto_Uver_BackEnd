@@ -11,8 +11,8 @@ class Viaje extends Model
     public $timestamps = false;
     protected $table = 'viajes';
     protected $fillable = [
-        'cedulaPasajero',
-        'cedulaConductor',
+        'numeroPasajero',
+        'numeroConductor',
         'UbicacionPasajero',
         'UbicacionDestino',
         'estado',
@@ -20,13 +20,13 @@ class Viaje extends Model
 
     public function pasajero()
     {
-        return $this->belongsTo(UsuarioPasajero::class, 'cedulaPasajero');
+        return $this->belongsTo(UsuarioPasajero::class, 'numeroPasajero');
     }
     public function conductor()
     {
-        return $this->belongsTo(UsuarioConductor::class, 'cedulaConductor');
+        return $this->belongsTo(UsuarioConductor::class, 'numeroConductor');
     }
-    public function casts():array //castea el booleano de estado de 0-1 a true or false.
+    public function casts():array 
  {
     return [
         'estado' => 'boolean',
