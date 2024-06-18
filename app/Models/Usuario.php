@@ -10,15 +10,17 @@ class Usuario extends Model
     use HasFactory;
     public $timestamps = false;
     protected $table = 'usuarios';
+    protected $primaryKey = 'numero';
+    public $incrementing = false;
     protected $fillable = ['cedula','numero','nombre','apellido','clave'];
 
     public function pasajero()
     {
-        return $this->hasOne(UsuarioPasajero::class, 'cedulaPasajero', 'cedula');
+        return $this->hasOne(UsuarioPasajero::class, 'numeroPasajero');
     }
 
     public function conductor()
     {
-        return $this->hasOne(UsuarioConductor::class, 'cedulaConductor', 'cedula');
+        return $this->hasOne(UsuarioConductor::class, 'numeroConductor');
     }
 }

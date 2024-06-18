@@ -1,5 +1,4 @@
 <?php
-
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -77,54 +76,53 @@ class UverTest extends TestCase
                      ],
                  ]);
     }
-
+    
     public function testRegistrarNumeroCelularExitosamente()
-{
-    $user = [
-        'numero' => 63549134,
-    ];
+    {
+        $user = [
+            'numero' => 63549134,
+        ];
 
-    $response = $this->postJson('/api/registrar-numero-celular', $user);
+        $response = $this->postJson('/api/registrar-numero-celular', $user);
 
-    $response->assertStatus(201)
-            ->assertJson([
-                'message' => 'Número de celular registrado exitosamente',
-                'usuario' => [
-                    'numero' => $user['numero'],
-                ],
-            ]);
+        $response->assertStatus(201)
+                ->assertJson([
+                    'message' => 'Número de celular registrado exitosamente',
+                    'usuario' => [
+                        'numero' => $user['numero'],
+                    ],
+                ]);
 
-    $this->assertDatabaseHas('usuarios', [
-        'numero' => $user['numero'],
-    ]);
-}
+        $this->assertDatabaseHas('usuarios', [
+            'numero' => $user['numero'],
+        ]);
+    }
 
-public function testRegistrarNumeroCelularDuplicado()
-{
-    // Crear un usuario inicial
-    $usuario = Usuario::create([
-        'cedula' => '1234567890',
-        'numero' => 12345678,
-        'nombre' => 'Rosa',
-        'apellido' => 'Perez',
-        'clave' => bcrypt('clavesecreta'),
-    ]);
+    public function testRegistrarNumeroCelularDuplicado()
+    {
+        // Crear un usuario inicial
+        $usuario = Usuario::create([
+            'cedula' => '1234567890',
+            'numero' => 12345678,
+            'nombre' => 'Rosa',
+            'apellido' => 'Perez',
+            'clave' => bcrypt('clavesecreta'),
+        ]);
 
-    // Intentar registrar un número de celular que ya existe
-    $user2 = [
-        'numero' => 12345678,
-    ];
+        // Intentar registrar un número de celular que ya existe
+        $user2 = [
+            'numero' => 12345678,
+        ];
 
-    $response = $this->postJson('/api/registrar-numero-celular', $user2);
+        $response = $this->postJson('/api/registrar-numero-celular', $user2);
 
-    $response->assertStatus(400)
-             ->assertJsonStructure([
-                 'errors' => [
-                     'numero',
-                 ],
-             ]);
-}
-
+        $response->assertStatus(400)
+                 ->assertJsonStructure([
+                     'errors' => [
+                         'numero',
+                     ],
+                 ]);
+    }
 
     public function testCrearViajeExitosamente()
     {
@@ -210,4 +208,43 @@ public function testRegistrarNumeroCelularDuplicado()
             'estado' => $payload['estado'],
         ]);
     }
+
+    public function testActualizarUsuarioPorNumeroExitosamente()
+{
+    $usuario = Usuario::create([
+        'cedula' => '1234567890',
+        'numero' => 12345678,
+        'nombre' => 'Luis',
+        'apellido' => 'Gomez',
+        'clave' => bcrypt('clavesecreta'),
+    ]);
+
+    $data = [
+        'cedula' => '0987654321',
+        'nombre' => 'Juan',
+        'apellido' => 'Perez',
+        'clave' => 'nuevaclave',
+    ];
+
+    $response = $this->putJson('/api/actualizar-usuario/' . $usuario->numero, $data);
+
+    $response->assertStatus(200)
+             ->assertJson([
+                 'message' => 'Usuario actualizado exitosamente',
+                 'usuario' => [
+                     'cedula' => $data['cedula'],
+                     'nombre' => $data['nombre'],
+                     'apellido' => $data['apellido'],
+                 ],
+             ]);
+
+    $this->assertDatabaseHas('usuarios', [
+        'numero' => $usuario->numero,
+        'cedula' => $data['cedula'],
+        'nombre' => $data['nombre'],
+        'apellido' => $data['apellido'],
+    ]);
+}
+
+
 }

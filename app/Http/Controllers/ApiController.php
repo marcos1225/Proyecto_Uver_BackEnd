@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -38,21 +37,21 @@ class ApiController extends Controller
     }
 
     public function registrarNumeroCelular(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'numero' => 'required|integer|unique:usuarios,numero',
-    ]);
+    {
+        $validator = Validator::make($request->all(), [
+            'numero' => 'required|integer|unique:usuarios,numero',
+        ]);
 
-    if ($validator->fails()) {
-        return response()->json(['errors' => $validator->errors()], 400);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        $usuario = Usuario::create([
+            'numero' => $request->numero,
+        ]);
+
+        return response()->json(['message' => 'Número de celular registrado exitosamente', 'usuario' => $usuario], 201);
     }
-
-    $usuario = Usuario::create([
-        'numero' => $request->numero,
-    ]);
-
-    return response()->json(['message' => 'Número de celular registrado exitosamente', 'usuario' => $usuario], 201);
-}
 
     public function crearViaje(Request $request)
     {
@@ -82,8 +81,45 @@ class ApiController extends Controller
             // Registrar el error para depuración
             Log::error('Error al crear el viaje: ' . $e->getMessage());
             return response()->json(['error' => 'Error al crear el viaje', 'details' => $e->getMessage()]);
-        
         }
-    
     }
+
+    public function actualizarUsuarioPorNumero(Request $request, $numero)
+{
+    $validator = Validator::make($request->all(), [
+        'cedula' => 'nullable|string|max:255|unique:usuarios,cedula,' . $numero . ',numero',
+        'nombre' => 'nullable|string|max:255',
+        'apellido' => 'nullable|string|max:255',
+        'clave' => 'nullable|string|max:255',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 400);
+    }
+
+    try {
+        $usuario = Usuario::where('numero', $numero)->first();
+
+        if (!$usuario) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+
+        $usuario->update([
+            'cedula' => $request->input('cedula', $usuario->cedula),
+            'nombre' => $request->input('nombre', $usuario->nombre),
+            'apellido' => $request->input('apellido', $usuario->apellido),
+            'clave' => $request->filled('clave') ? bcrypt($request->input('clave')) : $usuario->clave,
+        ]);
+
+        return response()->json(['message' => 'Usuario actualizado exitosamente', 'usuario' => $usuario], 200);
+    } catch (\Exception $e) {
+        Log::error('Error al actualizar el usuario: ' . $e->getMessage(), [
+            'numero' => $numero,
+            'request_data' => $request->all()
+        ]);
+        return response()->json(['error' => 'Error al actualizar el usuario', 'details' => $e->getMessage()], 500);
+    }
+}
+
+
 }
