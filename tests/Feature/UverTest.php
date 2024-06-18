@@ -116,7 +116,7 @@ class UverTest extends TestCase
             'cedulaPasajero' => $pasajero->cedula,
         ]);
 
-        // Crear conductor
+        
         $usuarioConductor = Usuario::create([
             'cedula' => '0987654321',
             'numero' => 87654321,
