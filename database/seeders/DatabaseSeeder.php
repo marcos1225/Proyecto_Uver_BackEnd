@@ -30,8 +30,8 @@ class DatabaseSeeder extends Seeder
             MarcaSeeder::class,
             ModeloSeeder::class,
             VehiculoSeeder::class,
-            UsuarioConductorSeeder::class,
-            ViajeSeeder::class,
+            UsuarioConductorSeeder::class
+            // ViajeSeeder::class,
         ]);
 
        

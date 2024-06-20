@@ -120,6 +120,58 @@ class ApiController extends Controller
         return response()->json(['error' => 'Error al actualizar el usuario', 'details' => $e->getMessage()], 500);
     }
 }
+public function verificarNumeroRegistrado($numero)
+    {
+        $usuario = Usuario::where('numero', $numero)->first();
 
+        if ($usuario) {
+            return response()->json(['message' => 'Número de teléfono registrado', 'usuario' => $usuario], 200);
+        } else {
+            return response()->json(['message' => 'Número de teléfono no registrado'], 404);
+        }
+    }
+    public function crearYRegistrarUsuarioPasajero(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'cedula' => 'nullable|string|unique:usuarios,cedula|max:255',
+            'numero' => 'required|integer|unique:usuarios,numero',
+            'nombre' => 'nullable|string|max:255',
+            'apellido' => 'nullable|string|max:255',
+            'clave' => 'nullable|string|max:255',
+        ]);
 
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        try {
+            
+            $usuario = Usuario::create([
+                'cedula' => $request->cedula,
+                'numero' => $request->numero,
+                'nombre' => $request->nombre,
+                'apellido' => $request->apellido,
+                'clave' => bcrypt($request->clave),
+            ]);
+
+            Log::info('Usuario creado: ' . $usuario->numero);
+
+           
+            $usuarioPasajero = UsuarioPasajero::create([
+                'numeroPasajero' => $usuario->numero,
+            ]);
+
+            Log::info('UsuarioPasajero creado: ' . $usuarioPasajero->numeroPasajero);
+
+            return response()->json([
+                'message' => 'Usuario y UsuarioPasajero creados exitosamente',
+                'usuario' => $usuario,
+                'usuarioPasajero' => $usuarioPasajero
+            ], 201);
+        } catch (\Exception $e) {
+            Log::error('Error al crear el usuario y el usuario pasajero: ' . $e->getMessage());
+            return response()->json(['error' => 'Error al crear el usuario y el usuario pasajero', 'details' => $e->getMessage()], 500);
+        }
+    }
+    
 }

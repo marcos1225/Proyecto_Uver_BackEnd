@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,6 +12,11 @@ class UsuarioPasajero extends Model
     protected $fillable = [
         'numeroPasajero'
     ];
+
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'numeroPasajero', 'numero');
+    }
 
     public function viajes()
     {

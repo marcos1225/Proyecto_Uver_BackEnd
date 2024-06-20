@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,14 +12,14 @@ class Usuario extends Model
     protected $primaryKey = 'numero';
     public $incrementing = false;
     protected $fillable = ['cedula','numero','nombre','apellido','clave'];
-
+    
     public function pasajero()
     {
-        return $this->hasOne(UsuarioPasajero::class, 'numeroPasajero');
+        return $this->hasOne(UsuarioPasajero::class, 'numeroPasajero', 'numero');
     }
 
     public function conductor()
     {
-        return $this->hasOne(UsuarioConductor::class, 'numeroConductor');
+        return $this->hasOne(UsuarioConductor::class, 'numeroConductor', 'numero');
     }
 }

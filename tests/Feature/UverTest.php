@@ -245,6 +245,65 @@ class UverTest extends TestCase
         'apellido' => $data['apellido'],
     ]);
 }
+public function testVerificarSiExisteElUsuario()
+    {
+        $usuario = Usuario::create([
+            'cedula' => '1234567890',
+            'numero' => 12345678,
+            'nombre' => 'Luis',
+            'apellido' => 'Gomez',
+            'clave' => bcrypt('clavesecreta'),
+        ]);
 
+        $response = $this->getJson('/api/verificar-numero-registrado/' . $usuario->numero);
+
+        $response->assertStatus(200)
+                 ->assertJson([
+                     'message' => 'Número de teléfono registrado',
+                     'usuario' => [
+                         'cedula' => $usuario->cedula,
+                         'numero' => $usuario->numero,
+                         'nombre' => $usuario->nombre,
+                         'apellido' => $usuario->apellido,
+                     ],
+                 ]);
+    }
+    public function testCrearYRegistrarUsuarioPasajeroExitosamente()
+    {
+        $user = [
+            'cedula' => '504390996',
+            'numero' => 63549134,
+            'nombre' => 'Jose',
+            'apellido' => 'Torres',
+            'clave' => 'perro123',
+        ];
+
+        $response = $this->postJson('/api/crear-registrar-usuario-pasajero', $user);
+
+        $response->assertStatus(201)
+                 ->assertJson([
+                     'message' => 'Usuario y UsuarioPasajero creados exitosamente',
+                     'usuario' => [
+                         'cedula' => $user['cedula'],
+                         'numero' => $user['numero'],
+                         'nombre' => $user['nombre'],
+                         'apellido' => $user['apellido'],
+                     ],
+                     'usuarioPasajero' => [
+                         'numeroPasajero' => $user['numero'],
+                     ],
+                 ]);
+
+        $this->assertDatabaseHas('usuarios', [
+            'cedula' => $user['cedula'],
+            'numero' => $user['numero'],
+            'nombre' => $user['nombre'],
+            'apellido' => $user['apellido'],
+        ]);
+
+        $this->assertDatabaseHas('usuario_pasajeros', [
+            'numeroPasajero' => $user['numero'],
+        ]);
+    }
 
 }
