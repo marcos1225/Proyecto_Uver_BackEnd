@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -173,5 +174,16 @@ public function verificarNumeroRegistrado($numero)
             return response()->json(['error' => 'Error al crear el usuario y el usuario pasajero', 'details' => $e->getMessage()], 500);
         }
     }
+    public function mostrarDatosViaje($idViaje)
+{
+    $viaje = Viaje::where('idViaje', $idViaje)->first();
+
+    if (!$viaje) {
+        return response()->json(['error' => 'Viaje no encontrado'], 404);
+    }
+
+    return response()->json(['viaje' => $viaje], 200);
+}
+
     
 }

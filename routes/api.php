@@ -10,3 +10,4 @@ Route::post('/registrar-numero-celular', [ApiController::class, 'registrarNumero
 Route::put('/actualizar-usuario/{numero}', [ApiController::class, 'actualizarUsuarioPorNumero']);
 Route::get('/verificar-numero-registrado/{numero}', [ApiController::class, 'verificarNumeroRegistrado']); 
 Route::post('/crear-registrar-usuario-pasajero', [ApiController::class, 'crearYRegistrarUsuarioPasajero']);
+Route::get('/mostrarViaje/{idViaje}', [ApiController::class, 'mostrarDatosViaje']);

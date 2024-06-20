@@ -305,5 +305,82 @@ public function testVerificarSiExisteElUsuario()
             'numeroPasajero' => $user['numero'],
         ]);
     }
+    public function testMostrarDatosViajeExitosamente()
+{
+    // Crear modelo
+    $modelo = Modelo::create(['modelo' => 2024]);
+    
+    // Crear marca
+    $marca = Marca::create(['marca' => 'Honda']);
+    
+    // Crear licencia
+    $licencia = Licencia::create([
+        'tipo' => 'B1',
+        'fechaVencimiento' => '2025-12-31',
+    ]);
+    
+    // Crear vehiculo utilizando los IDs recién creados
+    $vehiculo = Vehiculo::create([
+        'matricula' => 'ABC123',
+        'idMarca' => $marca->id,  
+        'idModelo' => $modelo->id,  
+    ]);
+    
+    // Crear pasajero
+    $pasajero = Usuario::create([
+        'cedula' => '1234567890',
+        'numero' => 12345678,
+        'nombre' => 'Marcos',
+        'apellido' => 'Gonzalez',
+        'clave' => bcrypt('securepassword'),
+    ]);
+    
+    UsuarioPasajero::create(['numeroPasajero' => $pasajero->numero]);
+    
+    // Crear conductor
+    $usuarioConductor = Usuario::create([
+        'cedula' => '0987654321',
+        'numero' => 87654321,
+        'nombre' => 'Juan',
+        'apellido' => 'Perez',
+        'clave' => bcrypt('securepassword2'),
+    ]);
+    
+    $conductor = UsuarioConductor::create([
+        'numeroConductor' => $usuarioConductor->numero,
+        'idLicencia' => $licencia->id,
+        'idVehiculo' => $vehiculo->matricula, 
+    ]);
+    
+    // Crear el viaje
+    $viaje = Viaje::create([
+        'numeroConductor' => $conductor->numeroConductor, 
+        'numeroPasajero' => $pasajero->numero, 
+        'UbicacionPasajero' => 'Ubicacion A', 
+        'UbicacionDestino' => 'Ubicacion B', 
+        'estado' => true
+    ]);
+    
+    // Asegurarse de que el viaje tiene un idViaje válido
+    $this->assertNotNull($viaje->idViaje, 'El idViaje no debería ser nulo');
+
+    // Verificar que el viaje se ha creado en la base de datos
+    $this->assertDatabaseHas('viajes', ['idViaje' => $viaje->idViaje]);
+
+    // Probar el endpoint
+    $response = $this->getJson('/api/mostrarViaje/' . $viaje->idViaje);
+
+    $response->assertStatus(200)
+             ->assertJson(['viaje' => [
+                 'idViaje' => $viaje->idViaje,
+                 'numeroConductor' => $viaje->numeroConductor,
+                 'numeroPasajero' => $viaje->numeroPasajero,
+                 'UbicacionPasajero' => $viaje->UbicacionPasajero,
+                 'UbicacionDestino' => $viaje->UbicacionDestino,
+                 'estado' => $viaje->estado,
+             ]]);
+}
+
+    
 
 }

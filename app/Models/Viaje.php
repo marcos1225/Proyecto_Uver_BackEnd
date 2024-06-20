@@ -9,6 +9,7 @@ class Viaje extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    protected $primaryKey = 'idViaje';
     protected $table = 'viajes';
     protected $fillable = [
         'numeroPasajero',
