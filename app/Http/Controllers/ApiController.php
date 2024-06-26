@@ -12,31 +12,6 @@ use Illuminate\Support\Facades\Log;
 
 class ApiController extends Controller
 {
-    public function crearUsuario(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'cedula' => 'nullable|string|unique:usuarios,cedula|max:255',
-            'numero' => 'required|integer|unique:usuarios,numero',
-            'nombre' => 'nullable|string|max:255',
-            'apellido' => 'nullable|string|max:255',
-            'clave' => 'nullable|string|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 400);
-        }
-
-        $usuario = Usuario::create([
-            'cedula' => $request->cedula,
-            'numero' => $request->numero,
-            'nombre' => $request->nombre,
-            'apellido' => $request->apellido,
-            'clave' => bcrypt($request->clave), 
-        ]);
-
-        return response()->json(['message' => 'Usuario creado exitosamente', 'usuario' => $usuario], 201);
-    }
-
     public function registrarNumeroCelular(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -63,11 +38,11 @@ class ApiController extends Controller
             'UbicacionDestino' => 'required|string|max:255',
             'estado' => 'required|boolean',
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 400);
         }
-
+    
         try {
             $viaje = Viaje::create([
                 'numeroConductor' => $request->numeroConductor,
@@ -76,14 +51,14 @@ class ApiController extends Controller
                 'UbicacionDestino' => $request->UbicacionDestino,
                 'estado' => $request->estado,
             ]);
-
-            return response()->json(['message' => 'Viaje creado exitosamente', 'viaje' => $viaje], 201);
+    
+            return response()->json(['message' => 'Viaje creado exitosamente', 'idViaje' => $viaje->idViaje], 201);
         } catch (\Exception $e) {
-            // Registrar el error para depuración
             Log::error('Error al crear el viaje: ' . $e->getMessage());
             return response()->json(['error' => 'Error al crear el viaje', 'details' => $e->getMessage()]);
         }
     }
+    
 
     public function actualizarUsuarioPorNumero(Request $request, $numero)
 {
@@ -121,16 +96,6 @@ class ApiController extends Controller
         return response()->json(['error' => 'Error al actualizar el usuario', 'details' => $e->getMessage()], 500);
     }
 }
-public function verificarNumeroRegistrado($numero)
-    {
-        $usuario = Usuario::where('numero', $numero)->first();
-
-        if ($usuario) {
-            return response()->json(['message' => 'Número de teléfono registrado', 'usuario' => $usuario], 200);
-        } else {
-            return response()->json(['message' => 'Número de teléfono no registrado'], 404);
-        }
-    }
     public function crearYRegistrarUsuarioPasajero(Request $request)
     {
         $validator = Validator::make($request->all(), [
